@@ -29,7 +29,7 @@ $apiSecret = getenv('OPENTOK_SECRET') ? : $config_array['OPENTOK_SECRET'];
 // MYSQL formate: username:pw@url/database
 $mysql_url = parse_url($mysql_url);
 $dbname = substr($mysql_url['path'],1);
-$con = mysqli_connect($mysql_url['host'], $mysql_url['user'], $mysql_url['pass']);
+$con = mysqli_connect($mysql_url['host'].':'.$mysql_url['port'], $mysql_url['user'], $mysql_url['pass']);
 
 // Check connection
 if (mysqli_connect_errno()) {
