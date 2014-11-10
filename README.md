@@ -35,6 +35,11 @@ An OpenTok 1-to-1 solution focussed on call scheduling
 
         extension=php_openssl.dll
 
+### Testing
+
+On OSX devices, navigate to `web` folder and start the server in your terminal: `php -S localhost:8000`
+
+
 ## Usage
 
 ### Customer
