@@ -1,6 +1,6 @@
-# OpenTok Scheduled Meeting Starter Kit
+# OpenTok Schedule Kit
 
-An OpenTok 1-to-1 solution focussed on call scheduling
+An OpenTok Starter Kit focussed on call scheduling
 
 ## Installation
 
