@@ -20,18 +20,16 @@ An OpenTok Starter Kit focussed on call scheduling
      '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'). The app uses these
      credentials to send emails to customers notifying them about appointments.
 
-4. Install [Composer](https://getcomposer.org/).
+4. Use Composer to install dependencies:
 
-5. Use Composer to install dependencies:
+        ./composer.phar install
 
-        composer install
-
-6. Set the document root for your web server (such as Apache, nginx, etc.) to the `web` directory
+5. Set the document root for your web server (such as Apache, nginx, etc.) to the `web` directory
    of this project. In the case of Apache, the provided `.htaccess` file handles URL rewriting.
    See the [Slim Route URL Rewriting Guide](http://docs.slimframework.com/#Route-URL-Rewriting)
    for more details.
 
-7. Make sure the following line is included in your php.ini file, and that it is not commented:
+6. Make sure the following line is included in your php.ini file, and that it is not commented:
 
         extension=php_openssl.dll
 
