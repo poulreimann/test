@@ -14,7 +14,7 @@ use OpenTok\OpenTok;
  * Configuration - pull credentials from env or config.ini
  * -----------------------------------------------------------------------------------------------*/
 $config_array = parse_ini_file("../config.ini");
-$mysql_url = getenv("MYSQL_URL") ? : $config_array['MYSQL_URL'];
+$mysql_url = getenv("CLEARDB_DATABASE_URL") ? : $config_array['MYSQL_URL'];
 $gmail_user = getenv('GMAIL_USER') ? : $config_array['GMAIL_USER'];
 $gmail_pw   = getenv('GMAIL_PW') ? : $config_array['GMAIL_PW'];        // SMTP account password
 $apiKey = getenv('OPENTOK_KEY') ? : $config_array['OPENTOK_KEY'];
@@ -29,7 +29,11 @@ $apiSecret = getenv('OPENTOK_SECRET') ? : $config_array['OPENTOK_SECRET'];
 // MYSQL formate: username:pw@url/database
 $mysql_url = parse_url($mysql_url);
 $dbname = substr($mysql_url['path'],1);
-$con = mysqli_connect($mysql_url['host'].':'.$mysql_url['port'], $mysql_url['user'], $mysql_url['pass']);
+$host = $mysql_url['host'];
+if ($mysql_url['port']) {
+  $host = $host . ':' . $mysql_url['port'];
+}
+$con = mysqli_connect($host, $mysql_url['user'], $mysql_url['pass']);
 
 // Check connection
 if (mysqli_connect_errno()) {

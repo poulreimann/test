@@ -200,9 +200,6 @@ Use Heroku config to set the following keys:
 
 *  `OPENTOK_SECRET` -- Your OpenTok API secret
 
-*  `MYSQL_URL` -- Your ClearDB URL when you added the
-   [ClearDB add-on](https://devcenter.heroku.com/articles/cleardb) for Heroku.
-
 *  `GMAIL_USER` -- Set this to your gmail username to send instructions to user. Include
    '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'.)
 
