@@ -192,16 +192,13 @@ Heroku.
 
 The provided `Procfile` describes a web process that launches this application.
 
-This application uses MYSQL. Follow [heroku addons:add cleardb:ignite](these instructions) to
+This application uses MYSQL. Use `heroku addons:create cleardb:ignite` to
 install the ClearDB addon for Heroku to use MYSQL.
+
+This application also uses SendGrid to send emails. Use `heroku addons:create sendgrid:starter`
 
 Use Heroku config to set the following keys:
 
 *  `OPENTOK_KEY` -- Your OpenTok API key
 
 *  `OPENTOK_SECRET` -- Your OpenTok API secret
-
-*  `GMAIL_USER` -- Set this to your gmail username to send instructions to user. Include
-   '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'.)
-
-*  `GMAIL_PW` -- Set this to your gmail password to send instructions to user.

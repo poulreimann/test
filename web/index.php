@@ -67,29 +67,47 @@ function sendQuery($query){
   return $result;
 }
 
-// Email setup
-$mail = new PHPMailer();
-$mail->IsSMTP();
-$mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
-                                           // 1 = errors and messages
-                                           // 2 = messages only
-$mail->SMTPAuth   = true;                  // enable SMTP authentication
-$mail->SMTPSecure = "ssl";
-$mail->Host       = "smtp.gmail.com"; // sets the SMTP server
-$mail->Port       = 465;                    // set the SMTP port for the GMAIL server
-$mail->Username   = $gmail_user; // SMTP account username
-$mail->Password   = $gmail_pw;        // SMTP account password
+$sendgrid_username = getenv("SENDGRID_USERNAME");
+$sendgrid_password = getenv("SENDGRID_PASSWORD");
+
+if ($sendgrid_username && $sendgrid_password) {
+  $sendgrid = new SendGrid($sendgrid_username, $sendgrid_password);
+} else {
+  // Email setup
+  $mail = new PHPMailer();
+  $mail->IsSMTP();
+  $mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
+                                             // 1 = errors and messages
+                                             // 2 = messages only
+  $mail->SMTPAuth   = true;                  // enable SMTP authentication
+  $mail->SMTPSecure = "ssl";
+  $mail->Host       = "smtp.gmail.com"; // sets the SMTP server
+  $mail->Port       = 465;                    // set the SMTP port for the GMAIL server
+  $mail->Username   = $gmail_user; // SMTP account username
+  $mail->Password   = $gmail_pw;        // SMTP account password
+}
 
 function sendEmail($fromName, $fromEmail, $toName, $toEmail, $subject, $body){
-  global $mail;
-  $mail->SetFrom($fromEmail, $fromName);
-  $mail->Subject  = $subject;
-  $mail->MsgHTML($body);
-  $mail->AddAddress($toEmail,$toName);
+  global $sendgrid;
+  if ($sendgrid) {
+    $message = new SendGrid\Email();
+    $message->addTo($toEmail)->
+              setFrom($fromEmail)->
+              setSubject($subject)->
+              setText($body)->
+              setHtml($body);
+    $response = $sendgrid->send($message);
+  } else {
+    global $mail;
+    $mail->SetFrom($fromEmail, $fromName);
+    $mail->Subject  = $subject;
+    $mail->MsgHTML($body);
+    $mail->AddAddress($toEmail,$toName);
 
-  if(!$mail -> Send()) {
-    echo "Mailer Error: " . $mail -> ErrorInfo;
-  }    
+    if(!$mail -> Send()) {
+      echo "Mailer Error: " . $mail -> ErrorInfo;
+    }
+  }
   return;
 }
 // end of email setup
