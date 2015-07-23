@@ -18,7 +18,8 @@ An OpenTok Starter Kit focussed on call scheduling
 
    * `GMAIL_USER` and `GMAIL_PW` -- These are your Gmail user name and password. Include
      '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'). The app uses these
-     credentials to send emails to customers notifying them about appointments.
+     credentials to send emails to customers notifying them about appointments. If you get
+     errors sending emails then you need to make sure you have [Access for less secure apps](https://www.google.com/settings/security/lesssecureapps) turned on.
 
 4. Use Composer to install dependencies:
 
