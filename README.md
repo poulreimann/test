@@ -18,7 +18,8 @@ An OpenTok Starter Kit focussed on call scheduling
 
    * `GMAIL_USER` and `GMAIL_PW` -- These are your Gmail user name and password. Include
      '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'). The app uses these
-     credentials to send emails to customers notifying them about appointments.
+     credentials to send emails to customers notifying them about appointments. If you get
+     errors sending emails then you need to make sure you have [Access for less secure apps](https://www.google.com/settings/security/lesssecureapps) turned on.
 
 4. Use Composer to install dependencies:
 
@@ -191,19 +192,13 @@ Heroku.
 
 The provided `Procfile` describes a web process that launches this application.
 
-This application uses MYSQL. Follow [heroku addons:add cleardb:ignite](these instructions) to
+This application uses MYSQL. Use `heroku addons:create cleardb:ignite` to
 install the ClearDB addon for Heroku to use MYSQL.
+
+This application also uses SendGrid to send emails. Use `heroku addons:create sendgrid:starter`
 
 Use Heroku config to set the following keys:
 
 *  `OPENTOK_KEY` -- Your OpenTok API key
 
 *  `OPENTOK_SECRET` -- Your OpenTok API secret
-
-*  `MYSQL_URL` -- Your ClearDB URL when you added the
-   [ClearDB add-on](https://devcenter.heroku.com/articles/cleardb) for Heroku.
-
-*  `GMAIL_USER` -- Set this to your gmail username to send instructions to user. Include
-   '@gmail.com' in the `GMAIL_USER` string (as in 'user@gmail.com'.)
-
-*  `GMAIL_PW` -- Set this to your gmail password to send instructions to user.

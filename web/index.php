@@ -14,7 +14,7 @@ use OpenTok\OpenTok;
  * Configuration - pull credentials from env or config.ini
  * -----------------------------------------------------------------------------------------------*/
 $config_array = parse_ini_file("../config.ini");
-$mysql_url = getenv("MYSQL_URL") ? : $config_array['MYSQL_URL'];
+$mysql_url = getenv("CLEARDB_DATABASE_URL") ? : $config_array['MYSQL_URL'];
 $gmail_user = getenv('GMAIL_USER') ? : $config_array['GMAIL_USER'];
 $gmail_pw   = getenv('GMAIL_PW') ? : $config_array['GMAIL_PW'];        // SMTP account password
 $apiKey = getenv('OPENTOK_KEY') ? : $config_array['OPENTOK_KEY'];
@@ -29,7 +29,11 @@ $apiSecret = getenv('OPENTOK_SECRET') ? : $config_array['OPENTOK_SECRET'];
 // MYSQL formate: username:pw@url/database
 $mysql_url = parse_url($mysql_url);
 $dbname = substr($mysql_url['path'],1);
-$con = mysqli_connect($mysql_url['host'].':'.$mysql_url['port'], $mysql_url['user'], $mysql_url['pass']);
+$host = $mysql_url['host'];
+if ($mysql_url['port']) {
+  $host = $host . ':' . $mysql_url['port'];
+}
+$con = mysqli_connect($host, $mysql_url['user'], $mysql_url['pass']);
 
 // Check connection
 if (mysqli_connect_errno()) {
@@ -63,29 +67,47 @@ function sendQuery($query){
   return $result;
 }
 
-// Email setup
-$mail = new PHPMailer();
-$mail->IsSMTP();
-$mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
-                                           // 1 = errors and messages
-                                           // 2 = messages only
-$mail->SMTPAuth   = true;                  // enable SMTP authentication
-$mail->SMTPSecure = "ssl";
-$mail->Host       = "smtp.gmail.com"; // sets the SMTP server
-$mail->Port       = 465;                    // set the SMTP port for the GMAIL server
-$mail->Username   = $gmail_user; // SMTP account username
-$mail->Password   = $gmail_pw;        // SMTP account password
+$sendgrid_username = getenv("SENDGRID_USERNAME");
+$sendgrid_password = getenv("SENDGRID_PASSWORD");
+
+if ($sendgrid_username && $sendgrid_password) {
+  $sendgrid = new SendGrid($sendgrid_username, $sendgrid_password);
+} else {
+  // Email setup
+  $mail = new PHPMailer();
+  $mail->IsSMTP();
+  $mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
+                                             // 1 = errors and messages
+                                             // 2 = messages only
+  $mail->SMTPAuth   = true;                  // enable SMTP authentication
+  $mail->SMTPSecure = "ssl";
+  $mail->Host       = "smtp.gmail.com"; // sets the SMTP server
+  $mail->Port       = 465;                    // set the SMTP port for the GMAIL server
+  $mail->Username   = $gmail_user; // SMTP account username
+  $mail->Password   = $gmail_pw;        // SMTP account password
+}
 
 function sendEmail($fromName, $fromEmail, $toName, $toEmail, $subject, $body){
-  global $mail;
-  $mail->SetFrom($fromEmail, $fromName);
-  $mail->Subject  = $subject;
-  $mail->MsgHTML($body);
-  $mail->AddAddress($toEmail,$toName);
+  global $sendgrid;
+  if ($sendgrid) {
+    $message = new SendGrid\Email();
+    $message->addTo($toEmail)->
+              setFrom($fromEmail)->
+              setSubject($subject)->
+              setText($body)->
+              setHtml($body);
+    $response = $sendgrid->send($message);
+  } else {
+    global $mail;
+    $mail->SetFrom($fromEmail, $fromName);
+    $mail->Subject  = $subject;
+    $mail->MsgHTML($body);
+    $mail->AddAddress($toEmail,$toName);
 
-  if(!$mail -> Send()) {
-    echo "Mailer Error: " . $mail -> ErrorInfo;
-  }    
+    if(!$mail -> Send()) {
+      echo "Mailer Error: " . $mail -> ErrorInfo;
+    }
+  }
   return;
 }
 // end of email setup
